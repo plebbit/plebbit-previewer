@@ -1,4 +1,4 @@
-// require('util').inspect.defaultOptions.depth = process.env.DEBUG_DEPTH
+require('util').inspect.defaultOptions.depth = process.env.DEBUG_DEPTH
 require('dotenv').config()
 
 const Plebbit = require('@plebbit/plebbit-js')
@@ -32,35 +32,22 @@ const allowedRedirects = new Set(config.redirects)
 assert(typeof config.redirects[0] === 'string', `config.redirects[0] not a a string`)
 const defaultRedirect = config.redirects[0]
 
-app.get('*', async (req, res) => {
-  const url = req.url
-
-  // irrelevant endpoints
-  if (url === '/service-worker.js' || url === '/manifest.json' || url === '/favicon.ico') {
-    return res.status(404).end()
-  }
-
-  if (!plebbit) {
-    debug('plebbit not defined yet')
-    return res.status(404).end()
-  }
-
-  const cid = req.params[0]?.replaceAll?.('/', '')
+const serve = async (req, res, subplebbitAddress, commentCid) => {
   let redirect = req.query.redirect?.replace?.(/\/$/, '')
-  debug(url, cid, redirect)
+  debug(req.url, subplebbitAddress, commentCid, redirect)
   if (!allowedRedirects.has(redirect)) {
     redirect = defaultRedirect
   }
 
-  debug('getting comment', cid)
-  let comment = commentCache.get(cid)
+  debug('getting comment', commentCid)
+  let comment = commentCache.get(commentCid)
   if (!comment) {
-    if (failedCache.get(cid) >= maxAttempts) {
-      debug('failed cache max attempt reached', cid)
+    if (failedCache.get(commentCid) >= maxAttempts) {
+      debug('failed cache max attempt reached', commentCid)
       return res.status(404).end()
     }
     try {
-      const res = await plebbit.getComment(cid)
+      const res = await plebbit.getComment(commentCid)
       comment = {
         title: res.title,
         subplebbitAddress: res.subplebbitAddress,
@@ -84,15 +71,20 @@ app.get('*', async (req, res) => {
       }
     }
     catch (e) {
-      failedCache.set(cid, (failedCache.get(cid) || 0) + 1)
-      debug('failed getting comment', cid, e.message)
+      failedCache.set(commentCid, (failedCache.get(commentCid) || 0) + 1)
+      debug('failed getting comment', commentCid, e.message)
       return res.status(404).end()
     }
-    commentCache.set(cid, comment)
+    commentCache.set(commentCid, comment)
   }
   debug(comment)
 
-  let html = htmlCache.get(cid + redirect)
+  if (subplebbitAddress && subplebbitAddress !== comment.subplebbitAddress) {
+    debug(`subplebbitAddress '${subplebbitAddress}' !== '${comment.subplebbitAddress}'`)
+    return res.status(404).end()
+  }
+
+  let html = htmlCache.get(commentCid + redirect)
   if (!html) {
     // image
     let imageTag = ''
@@ -111,11 +103,11 @@ app.get('*', async (req, res) => {
 
     // description
     let description = `Posted by u/${comment.authorShortAddress}`
-    if (comment.content) {
-      description += ` - ${comment.content}`
+    if (comment.content?.trim?.()) {
+      description += ` - ${comment.content.trim()}`
     }
 
-    const redirectUrl = `https://${redirect}/#/p/${comment.subplebbitAddress}/c/${cid}`
+    const redirectUrl = `https://${redirect}/#/p/${comment.subplebbitAddress}/c/${commentCid}`
 
     html = `<!DOCTYPE html>
 <html>
@@ -130,10 +122,50 @@ app.get('*', async (req, res) => {
   </body>
 </html>`
 
-    htmlCache.set(cid + redirect, html)
+    htmlCache.set(commentCid + redirect, html)
   }
 
   res.send(html)
+}
+
+const dontServe = (req, res) => {
+  // irrelevant endpoints
+  if (req.url === '/service-worker.js' || req.url === '/manifest.json' || req.url === '/favicon.ico') {
+    res.status(404).end()
+    return true
+  }
+
+  if (!plebbit) {
+    debug('plebbit not defined yet')
+    res.status(404).end()
+    return true
+  }
+
+  return false
+}
+
+app.get('/p/:subplebbitAddress/c/:commentCid', async (req, res) => {
+  if (dontServe(req, res)) {
+    return
+  }
+  const {subplebbitAddress, commentCid} = req.params
+  await serve(req, res, subplebbitAddress, commentCid)
+})
+
+app.get('/c/:commentCid', async (req, res) => {
+  if (dontServe(req, res)) {
+    return
+  }
+  const {commentCid} = req.params
+  await serve(req, res, undefined, commentCid)
+})
+
+app.get('/:commentCid', async (req, res) => {
+  if (dontServe(req, res)) {
+    return
+  }
+  const {commentCid} = req.params
+  await serve(req, res, undefined, commentCid)
 })
 
 app.listen(port, () => {
