@@ -60,6 +60,12 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
       }
       comment.mediaInfo = getCommentMediaInfo(comment)
 
+      // try adding short subplebbit addres
+      try {
+        comment.shortSubplebbitAddress = (await plebbit.createSubplebbit({address: comment.subplebbitAddress || 'n/a'})).shortAddress
+      }
+      catch (e) {}
+
       // fetch thumbnail if doesn't exist
       if (comment.link && !comment.mediaInfo) {
         try {
@@ -104,7 +110,7 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
     }
 
     // description
-    let description = `Posted by u/${comment.authorShortAddress}`
+    let description = `Posted by u/${comment.authorShortAddress} in p/${comment.shortSubplebbitAddress || comment.subplebbitAddress}`
     if (comment.content?.trim?.()) {
       description += ` - ${comment.content.trim()}`
     }
@@ -145,6 +151,11 @@ const dontServe = (req, res) => {
 
   return false
 }
+
+app.get('/robots.txt', async (req, res) => {
+  res.send(`User-agent: *
+Allow: /`)
+})
 
 app.get('/p/:subplebbitAddress/c/:commentCid', async (req, res) => {
   if (dontServe(req, res)) {

@@ -1,6 +1,7 @@
 .ipfs
 .deploy-env
 .plebbit
+test-pleb.bz.js
 
 # Logs
 logs
