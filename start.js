@@ -55,7 +55,7 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
         subplebbitAddress: res.subplebbitAddress,
         link: res.link,
         content: res.content,
-        authorShortAddress: res.author.shortAddress,
+        shortAuthorAddress: res.author.shortAddress,
         thumbnailUrl: res.thumbnailUrl,
       }
       comment.mediaInfo = getCommentMediaInfo(comment)
@@ -110,7 +110,7 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
     }
 
     // description
-    let description = `Posted by u/${comment.authorShortAddress} in p/${comment.shortSubplebbitAddress || comment.subplebbitAddress}`
+    let description = `Posted by u/${comment.shortAuthorAddress} in p/${comment.shortSubplebbitAddress || comment.subplebbitAddress}`
     if (comment.content?.trim?.()) {
       description += ` - ${comment.content.trim()}`
     }
