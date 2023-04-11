@@ -94,10 +94,19 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
 
   let html = htmlCache.get(commentCid + redirect)
   if (!html) {
+    let twitterCard = 'summary'
+
     // image
-    let imageTag = ''
-    if (comment.mediaInfo?.url) {
-      imageTag = `\n    <meta property="og:image" content="${comment.mediaInfo?.url}" />\n`
+    const image = comment.mediaInfo?.url
+    let ogImageTag = ''
+    let twitterImageTag = ''
+    if (image) {
+      twitterCard = 'summary_large_image'
+      ogImageTag = `
+    <meta property="og:image" content="${image}"/>`
+      twitterImageTag = `
+    <meta name="twitter:image" content="${image}"/>
+    <meta name="twitter:image:src" content="${image}"/>`
     }
 
     // title
@@ -116,14 +125,25 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
     }
 
     const redirectUrl = `https://${redirect}/#/p/${comment.subplebbitAddress}/c/${commentCid}`
+    const iconUrl = `https://${redirect}/favicon.ico`
 
     html = `<!DOCTYPE html>
 <html>
   <head>
-    <title>Just a moment...</title>
-    <meta name="robots" content="noindex,nofollow">
-    <meta property="og:title" content="${title}" />
-    <meta property="og:description" content="${description}" />${imageTag}
+    <meta charSet="utf-8"/>
+    <title>${title}</title>
+    <meta name="title" content="${title}"/>
+    <meta name="description" content="${description}"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="${redirectUrl}"/>
+    <meta property="og:title" content="${title}"/>
+    <meta property="og:description" content="${description}"/>${ogImageTag}
+    <meta name="twitter:card" content="${twitterCard}"/>
+    <meta name="twitter:url" content="${redirectUrl}"/>
+    <meta name="twitter:title" content="${title}"/>
+    <meta name="twitter:description" content="${description}"/>${twitterImageTag}
+    <link rel="icon" href="${iconUrl}"/>
+    <link rel="apple-touch-icon" href="${iconUrl}"/>
     <meta http-equiv="Refresh" content="0; url='${redirectUrl}'" />
   </head>
   <body>
