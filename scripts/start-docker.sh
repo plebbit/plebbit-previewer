@@ -23,7 +23,7 @@ docker run \
   --log-opt max-file=5 \
   --volume=$(pwd):/usr/src/plebbit-previewer \
   --workdir="/usr/src/plebbit-previewer" \
-  --publish "$port:80" \
+  --publish "80:$port" \
   node:16 \
   npm run start
 
