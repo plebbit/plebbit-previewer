@@ -16,7 +16,7 @@ npm install
 npm run start
 ```
 
-How to use with docker
+### How to use with docker
 
 ```
 npm install
