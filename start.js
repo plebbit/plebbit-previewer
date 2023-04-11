@@ -6,6 +6,8 @@ const assert = require('assert')
 const config = require('./config')
 const express = require('express')
 const app = express()
+console.log
+app.on('error', e => console.log(e.message))
 const port = config.port
 assert(port, 'missing config.port')
 
@@ -168,6 +170,9 @@ app.get('/:commentCid', async (req, res) => {
   await serve(req, res, undefined, commentCid)
 })
 
-app.listen(port, () => {
-  console.log(`listening on port ${port}`)
-})
+app.listen(port, () => console.log(`listening on port ${port}`))
+  .on('error', e => console.log(e.message))
+
+// try listening on port 80, will fail unless on production server
+app.listen(80, () => console.log(`listening on port ${port}`))
+  .on('error', e => console.log(e.message))
