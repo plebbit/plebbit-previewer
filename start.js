@@ -173,6 +173,6 @@ app.get('/:commentCid', async (req, res) => {
 app.listen(port, () => console.log(`listening on port ${port}`))
   .on('error', e => console.log(e.message))
 
-// try listening on port 80, will fail unless on production server
-app.listen(80, () => console.log(`listening on port ${port}`))
-  .on('error', e => console.log(e.message))
+// uncomment to listen on port 80 as well
+// app.listen(80, () => console.log(`listening on port ${port}`))
+//   .on('error', e => console.log(e.message))
