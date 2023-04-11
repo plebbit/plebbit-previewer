@@ -155,6 +155,8 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
     htmlCache.set(commentCid + redirect, html)
   }
 
+  // the comment is immutable, so set the cache a long time
+  res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
   res.send(html)
 }
 
@@ -174,6 +176,7 @@ const dontServe = (req, res) => {
   return false
 }
 
+// robots.txt needed to not prevent bots from crawling the previews
 app.get('/robots.txt', async (req, res) => {
   res.send(`User-agent: *
 Allow: /`)
