@@ -144,9 +144,11 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
     <meta name="twitter:description" content="${description}"/>${twitterImageTag}
     <link rel="icon" href="${iconUrl}"/>
     <link rel="apple-touch-icon" href="${iconUrl}"/>
-    <meta http-equiv="Refresh" content="0; url='${redirectUrl}'" />
   </head>
   <body>
+    <script>
+      window.location.replace("${redirectUrl}")
+    </script>
   </body>
 </html>`
 
