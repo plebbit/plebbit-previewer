@@ -36,6 +36,11 @@ const defaultRedirect = config.redirects[0]
 
 const serve = async (req, res, subplebbitAddress, commentCid) => {
   let redirect = req.query.redirect?.replace?.(/\/$/, '')
+  // allow redirect=1 to redirect to config.redirects[1]
+  if (config.redirects[redirect]) {
+    redirect = config.redirects[redirect]
+  }
+
   debug(req.url, subplebbitAddress, commentCid, redirect)
   if (!allowedRedirects.has(redirect)) {
     redirect = defaultRedirect
