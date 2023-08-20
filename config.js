@@ -6,7 +6,11 @@ module.exports = {
   redirects: [
     'plebbitapp.eth.limo',
     'plebchan.eth.limo',
+    'plebones.eth.limo',
+    'seedit.eth.limo',
     'plebbitapp.eth.link',
     'plebchan.eth.link',
+    'plebones.eth.link',
+    'seedit.eth.link',
   ]
 }
