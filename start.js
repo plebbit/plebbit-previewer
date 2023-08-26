@@ -6,7 +6,6 @@ const assert = require('assert')
 const config = require('./config')
 const express = require('express')
 const app = express()
-console.log
 app.on('error', e => console.log(e.message))
 const port = config.port
 assert(port, 'missing config.port')
