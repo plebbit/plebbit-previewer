@@ -73,7 +73,7 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
       // fetch thumbnail if doesn't exist
       if (comment.link && !comment.mediaInfo) {
         try {
-          const res = await ogs({url: comment.link})
+          const res = await ogs({url: comment.link, headers})
           comment.thumbnailUrl = res.result.ogImage.url
           comment.mediaInfo = {url: comment.thumbnailUrl, type: 'image'}
         }
