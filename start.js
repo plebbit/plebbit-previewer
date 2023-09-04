@@ -78,7 +78,7 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
           comment.mediaInfo = {url: comment.thumbnailUrl, type: 'image'}
         }
         catch (e) {
-          debug('failed fetching comment.link thumbnail', comment.link, e.message)
+          debug('failed fetching comment.link thumbnail', comment.link, e?.message || e?.result?.error || e)
         }
       }
     }
