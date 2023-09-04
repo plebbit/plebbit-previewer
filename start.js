@@ -12,7 +12,9 @@ assert(port, 'missing config.port')
 
 const {getCommentMediaInfo} = require('./lib/utils')
 const ogs = require('open-graph-scraper')
-const headers = {"user-agent": "Googlebot/2.1 (+http://www.google.com/bot.html)"}
+const googleHeaders = {'user-agent': 'Googlebot/2.1 (+http://www.google.com/bot.html)'}
+const browserHeaders = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36'}
+const useGoogleHeaders = new Set(['twitter.com', 'x.com'])
 const QuickLRU = require('quick-lru')
 const commentCache = new QuickLRU({maxSize: 10000})
 const htmlCache = new QuickLRU({maxSize: 10000})
@@ -73,6 +75,7 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
       // fetch thumbnail if doesn't exist
       if (comment.link && !comment.mediaInfo) {
         try {
+          const headers = useGoogleHeaders.has(new URL(comment.link).hostname) ? googleHeaders : browserHeaders
           const res = await ogs({url: comment.link, headers})
           comment.thumbnailUrl = res.result.ogImage.url
           comment.mediaInfo = {url: comment.thumbnailUrl, type: 'image'}
