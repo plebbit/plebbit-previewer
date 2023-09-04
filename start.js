@@ -11,10 +11,6 @@ const port = config.port
 assert(port, 'missing config.port')
 
 const {getCommentMediaInfo} = require('./lib/utils')
-const ogs = require('open-graph-scraper')
-const googleHeaders = {'user-agent': 'Googlebot/2.1 (+http://www.google.com/bot.html)'}
-const browserHeaders = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36'}
-const useGoogleHeaders = new Set(['twitter.com', 'x.com'])
 const QuickLRU = require('quick-lru')
 const commentCache = new QuickLRU({maxSize: 10000})
 const htmlCache = new QuickLRU({maxSize: 10000})
@@ -23,6 +19,12 @@ const Debug = require('debug')
 const debug = Debug('plebbit-previewer:server')
 Debug.enable('plebbit-previewer:*')
 const maxAttempts = 5
+
+// use google headers on twitter or doesn't work
+const ogs = require('open-graph-scraper')
+const googleHeaders = {'user-agent': 'Googlebot/2.1 (+http://www.google.com/bot.html)'}
+const useGoogleHeaders = new Set(['twitter.com', 'www.twitter.com', 'x.com', 'www.x.com'])
+const browserHeaders = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36'}
 
 let plebbit
 Plebbit(config.plebbitOptions).then(_plebbit => {
@@ -78,6 +80,9 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
           const headers = useGoogleHeaders.has(new URL(comment.link).hostname) ? googleHeaders : browserHeaders
           const res = await ogs({url: comment.link, headers})
           comment.thumbnailUrl = res.result.ogImage.url
+          if (!comment.thumbnailUrl) {
+            throw Error(`open-graph-scraper result has no ogImage.url ${JSON.stringify(res.result, null, 2)}`)
+          }
           comment.mediaInfo = {url: comment.thumbnailUrl, type: 'image'}
         }
         catch (e) {
