@@ -4,13 +4,13 @@ module.exports = {
     ipfsGatewayUrls: ['https://ipfs.io', 'https://ipfsgateway.xyz', 'https://cloudflare-ipfs.com'],
   },
   redirects: [
-    'plebbitapp.eth.limo',
+    'seedit.eth.limo',
     'plebchan.eth.limo',
     'plebones.eth.limo',
-    'seedit.eth.limo',
-    'plebbitapp.eth.link',
+    'plebbitapp.eth.limo',
+    'seedit.eth.link',
     'plebchan.eth.link',
     'plebones.eth.link',
-    'seedit.eth.link',
+    'plebbitapp.eth.link',
   ]
 }
