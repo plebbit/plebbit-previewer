@@ -129,6 +129,9 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
         title = title.slice(0, 60) + '...'
       }
     }
+    if (!title) {
+      title = '-'
+    }
 
     // description
     let description = `Posted by u/${comment.shortAuthorAddress} in p/${comment.shortSubplebbitAddress || comment.subplebbitAddress}`
