@@ -139,7 +139,22 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
       description += ` - ${comment.content.trim()}`
     }
 
-    const redirectUrl = `https://${redirect}/#/p/${comment.subplebbitAddress}/c/${commentCid}`
+    // add query string back, useful for ?context=3 on old.reddit
+    let queryString = ''
+    for (const query in req.query) {
+      if (query === 'redirect' || query === 'r') {
+        continue
+      }
+      if (queryString === '') {
+        queryString += '?'
+      }
+      else {
+        queryString += '&'
+      }
+      queryString += `${query}=${req.query[query]}`
+    }
+
+    const redirectUrl = `https://${redirect}/#/p/${comment.subplebbitAddress}/c/${commentCid}${queryString}`
     const iconUrl = `https://${redirect}/favicon.ico`
 
     html = `<!DOCTYPE html>
