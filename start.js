@@ -157,6 +157,15 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
     const redirectUrl = `https://${redirect}/#/p/${comment.subplebbitAddress}/c/${commentCid}${queryString}`
     const iconUrl = `https://${redirect}/favicon.ico`
 
+    // derive site name from redirect url
+    let siteName = 'plebbit'
+    if (redirect.includes('seedit')) {
+      siteName = 'seedit'
+    }
+    else if (redirect.includes('plebchan')) {
+      siteName = 'plebchan'
+    }
+
     html = `<!DOCTYPE html>
 <html>
   <head>
@@ -164,6 +173,7 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
     <title>${title}</title>
     <meta name="title" content="${title}"/>
     <meta name="description" content="${description}"/>
+    <meta property="og:site_name" content="${siteName}" />
     <meta property="og:type" content="website"/>
     <meta property="og:url" content="${redirectUrl}"/>
     <meta property="og:title" content="${title}"/>
