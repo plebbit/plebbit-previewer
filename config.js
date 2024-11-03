@@ -1,16 +1,17 @@
 module.exports = {
   port: 3924,
   plebbitOptions: {
-    ipfsGatewayUrls: ['https://ipfs.io', 'https://ipfsgateway.xyz', 'https://cloudflare-ipfs.com'],
+    ipfsGatewayUrls: ['https://ipfs.io', 'https://ipfsgateway.xyz', 'https://4everland.io', 'https://gateway.pinata.cloud'],
   },
   redirects: [
     'seedit.eth.limo',
     'plebchan.eth.limo',
     'plebones.eth.limo',
-    'plebbitapp.eth.limo',
     'seedit.eth.link',
     'plebchan.eth.link',
     'plebones.eth.link',
-    'plebbitapp.eth.link',
+    'seedit.eth.sucks',
+    'plebchan.eth.sucks',
+    'plebones.eth.sucks'
   ]
 }
