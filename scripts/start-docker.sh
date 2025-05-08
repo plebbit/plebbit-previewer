@@ -24,7 +24,7 @@ docker run \
   --volume=$(pwd):/usr/src/plebbit-previewer \
   --workdir="/usr/src/plebbit-previewer" \
   --publish "80:$port" \
-  node:16 \
+  node:20 \
   npm run start
 
 docker logs --follow plebbit-previewer

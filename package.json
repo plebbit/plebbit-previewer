@@ -6,7 +6,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@plebbit/plebbit-js": "github:plebbit/plebbit-js#af064415343bcac06d7c9375fa30e2d73df7bd17",
+    "@plebbit/plebbit-js": "github:plebbit/plebbit-js#a2cb6ca6462b2e2e3b66f71204375a81ed05cf80",
     "dotenv": "16.0.3",
     "express": "4.18.2",
     "ext-name": "5.0.0",

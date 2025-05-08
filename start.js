@@ -1,7 +1,6 @@
 require('util').inspect.defaultOptions.depth = process.env.DEBUG_DEPTH
 require('dotenv').config()
 
-const Plebbit = require('@plebbit/plebbit-js')
 const assert = require('assert')
 const config = require('./config')
 const express = require('express')
@@ -26,10 +25,11 @@ const googleHeaders = {'user-agent': 'Googlebot/2.1 (+http://www.google.com/bot.
 const useGoogleHeaders = new Set(['twitter.com', 'www.twitter.com', 'x.com', 'www.x.com'])
 const browserHeaders = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36'}
 
-let plebbit
-Plebbit(config.plebbitOptions).then(_plebbit => {
-  plebbit = _plebbit
+let plebbit, getShortAddress
+import('@plebbit/plebbit-js').then(async Plebbit => {
+  plebbit = await Plebbit.default(config.plebbitOptions)
   plebbit.on('error', e => debug(e.message))
+  getShortAddress = Plebbit.getShortAddress
 })
 
 assert(Array.isArray(config.redirects), `config.redirects not an array`)
@@ -70,7 +70,7 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
 
       // try adding short subplebbit addres
       try {
-        comment.shortSubplebbitAddress = (await plebbit.createSubplebbit({address: comment.subplebbitAddress || 'n/a'})).shortAddress
+        comment.shortSubplebbitAddress = getShortAddress(comment.subplebbitAddress)
       }
       catch (e) {}
 

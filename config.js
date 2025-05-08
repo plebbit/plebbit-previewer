@@ -1,7 +1,11 @@
 module.exports = {
   port: 3924,
   plebbitOptions: {
-    ipfsGatewayUrls: ['https://ipfs.io', 'https://ipfsgateway.xyz', 'https://4everland.io', 'https://gateway.pinata.cloud'],
+    ipfsGatewayUrls: [      
+      'https://ipfsgateway.xyz',
+      'https://gateway.plebpubsub.xyz',
+      'https://gateway.forumindex.com',
+    ],
   },
   redirects: [
     'seedit.eth.limo',
