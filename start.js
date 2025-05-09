@@ -6,7 +6,7 @@ const config = require('./config')
 const express = require('express')
 const app = express()
 app.on('error', e => console.log(e.message))
-const port = config.port
+const port = process.env.PLEBBIT_PREVIEWER_PORT || config.port
 assert(port, 'missing config.port')
 
 const {getCommentMediaInfo} = require('./lib/utils')
@@ -246,8 +246,8 @@ app.get('/:commentCid', async (req, res) => {
   await serve(req, res, undefined, commentCid)
 })
 
-app.listen(port, () => console.log(`listening on port ${port}`))
-  .on('error', e => console.log(e.message))
+app.listen(port, () => debug(`listening on port ${port}`))
+  .on('error', e => debug(e.message))
 
 // uncomment to listen on port 80 as well
 // app.listen(80, () => console.log(`listening on port ${port}`))
