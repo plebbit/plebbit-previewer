@@ -22,7 +22,6 @@ git clone https://github.com/plebbit/plebbit-previewer.git
 cd plebbit-previewer
 git reset HEAD --hard
 git pull
-npm install
 "
 
 # execute script over ssh
