@@ -8,6 +8,8 @@ module.exports = {
     ],
   },
   redirects: [
+    'seedit.app',
+    'plebchan.app',
     'seedit.eth.limo',
     'plebchan.eth.limo',
     'plebones.eth.limo',
