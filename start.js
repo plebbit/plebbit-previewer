@@ -54,7 +54,7 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
   if (!comment) {
     if (failedCache.get(commentCid) >= maxAttempts) {
       debug('failed cache max attempt reached', commentCid)
-      return res.status(404).end()
+      return res.status(404).end('failed getting comment')
     }
     try {
       const res = await plebbit.getComment(commentCid)
@@ -93,7 +93,7 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
     catch (e) {
       failedCache.set(commentCid, (failedCache.get(commentCid) || 0) + 1)
       debug('failed getting comment', commentCid, e.message)
-      return res.status(404).end()
+      return res.status(404).end(e.message)
     }
     commentCache.set(commentCid, comment)
   }
@@ -101,7 +101,7 @@ const serve = async (req, res, subplebbitAddress, commentCid) => {
 
   if (subplebbitAddress && subplebbitAddress !== comment.subplebbitAddress) {
     debug(`subplebbitAddress '${subplebbitAddress}' !== '${comment.subplebbitAddress}'`)
-    return res.status(404).end()
+    return res.status(404).end('invalid subplebbit address')
   }
 
   let html = htmlCache.get(commentCid + redirect)
